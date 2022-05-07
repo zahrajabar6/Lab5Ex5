@@ -1,0 +1,85 @@
+Option Explicit On
+Option Strict On
+Option Infer Off
+
+Public Class Form1
+
+    Private Sub txtsales_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtsales.KeyPress
+        'textbox accept only numbers, period and backspace
+
+        If (e.KeyChar < "0" OrElse e.KeyChar > "9") AndAlso
+        e.KeyChar <> ControlChars.Back AndAlso e.KeyChar <> "." Then
+            e.Handled = True
+        End If
+
+    End Sub
+
+    Private Sub txtsales_Enter(sender As Object, e As EventArgs) Handles txtsales.TextChanged
+        'select text when recieving the focus
+        txtsales.SelectAll()
+        lblTotal.Text = String.Empty
+        lblComm.Text = String.Empty
+        lblAdd.Text = String.Empty
+    End Sub
+
+    Private Sub btnCalc_Click(sender As Object, e As EventArgs) Handles btnCalc.Click
+
+        Dim dblTotal, dblSales As Double
+        Dim dblComm As Double = 0
+        Dim dblAdd As Double = 0
+
+        Double.TryParse(txtsales.Text, dblSales)
+
+        If dblSales > 0 Then
+            Select Case dblSales
+                Case 1 To 5999.99
+                    dblComm = dblSales * 0.1
+                Case 6000 To 29999.99
+                    If dblSales > 6000 Then
+                        dblComm = 600 + dblSales * 0.13
+                    Else
+                        dblComm = 600
+                    End If
+                Case Is > 30000
+                    dblComm = 3720 + dblSales * 0.14
+            End Select
+
+            If chkOver10.Checked = True AndAlso dblSales >= 10000 Then
+                dblAdd = 500
+            End If
+
+            If chkTravel.Checked = True Then
+                dblAdd = 700
+            End If
+
+            dblTotal = dblComm + dblAdd
+
+        Else
+            dblAdd = 0
+            dblComm = 0
+            dblTotal = 0
+
+        End If
+
+        lblTotal.Text = dblTotal.ToString("C2")
+        lblComm.Text = dblComm.ToString("C2")
+        lblAdd.Text = dblAdd.ToString("C2")
+
+    End Sub
+
+    Private Sub chkOver10_CheckedChanged(sender As Object, e As EventArgs) Handles chkOver10.CheckedChanged
+        lblTotal.Text = String.Empty
+        lblComm.Text = String.Empty
+        lblAdd.Text = String.Empty
+    End Sub
+
+    Private Sub chkTravel_CheckedChanged(sender As Object, e As EventArgs) Handles chkTravel.CheckedChanged
+        lblTotal.Text = String.Empty
+        lblComm.Text = String.Empty
+        lblAdd.Text = String.Empty
+    End Sub
+
+    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
+        Me.Close()
+    End Sub
+End Class
